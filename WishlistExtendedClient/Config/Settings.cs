@@ -53,6 +53,7 @@ namespace WishlistExtended.Config
         public static ConfigEntry<bool>? IncludeQuests;
         public static ConfigEntry<bool>? QuestsFirOnly;
         public static ConfigEntry<bool>? QuestsIncludeFuture;
+        public static ConfigEntry<bool>? BothAsOther;
         public static ConfigEntry<int>? HideoutPriority;
         public static ConfigEntry<int>? CraftsPriority;
         public static ConfigEntry<int>? BartersPriority;
@@ -165,6 +166,13 @@ namespace WishlistExtended.Config
             );
 
             QuestsIncludeFuture.SettingChanged += (_, _) => WishlistService.RebuildAll();
+
+            BothAsOther = general.BindConfig(
+                "Items for both hideout and quests go to 'Other'",
+                true,
+                "Whether an item needed for both a hideout upgrade and a quest should be listed in the 'Other' wishlist group "
+                + "instead of the group chosen by the priorities below"
+            );
 
             CraftsPriority = general.BindConfig(
                 "Crafts priority",

@@ -96,7 +96,8 @@ namespace WishlistExtended.Features
 
                 foreach (WishlistHideoutData item in hideout)
                 {
-                    if (!everything && excludeFir && item.Fir)
+                    // FiR only: the item is wanted as a type ("find this one"), so a non-FiR copy is marked too, like crafts
+                    if (!everything && !firOnly && excludeFir && item.Fir)
                     {
                         continue;
                     }
@@ -160,7 +161,7 @@ namespace WishlistExtended.Features
 
                 foreach (WishlistQuestData item in quests)
                 {
-                    if (!everything && excludeFir && item.Fir)
+                    if (!everything && !firOnly && excludeFir && item.Fir)
                     {
                         continue;
                     }
@@ -183,6 +184,12 @@ namespace WishlistExtended.Features
 
         private static EWishlistGroup GetWishlistGroup(WishlistData data)
         {
+            // needed for both a hideout upgrade and a quest: its own group, so it stands apart from either
+            if (Settings.BothAsOther!.Value && data.HasHideout && data.HasQuests)
+            {
+                return EWishlistGroup.Other;
+            }
+
             EWishlistGroup group = EWishlistGroup.Hideout;
             int priority = int.MinValue;
 
