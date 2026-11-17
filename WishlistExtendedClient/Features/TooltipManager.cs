@@ -510,7 +510,7 @@ namespace WishlistExtended.Features
 
             if (Settings.TooltipFirLabels!.Value)
             {
-                sb.Append(' ').Append(data.Fir ? "<color=#f0f020>" + "wext_fir".Localized() + "</color>" : "<color=#a0a0a0>" + "wext_nonfir".Localized() + "</color>");
+                sb.Append(' ').Append(data.Fir ? "<size=80%><color=#f0f020>" + "wext_fir".Localized() + "</color></size>" : "<size=80%><color=#8a8a8a>" + "wext_nonfir".Localized() + "</color></size>");
             }
 
             sb.AppendLine();
