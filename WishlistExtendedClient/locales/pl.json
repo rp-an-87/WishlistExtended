@@ -9,5 +9,7 @@
   "wext_current_quests": "Aktywne zadania:",
   "wext_future_quests": "Przyszłe zadania:",
 
+  "wext_fir": "FiR",
+  "wext_nonfir": "bez FiR",
   "wext_in_stash": "W kryjówce: {0} ({1} FiR)"
 }

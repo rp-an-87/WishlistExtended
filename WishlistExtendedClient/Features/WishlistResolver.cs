@@ -33,7 +33,7 @@ namespace WishlistExtended.Features
             return wishlist;
         }
 
-        public static Dictionary<MongoID, WishlistData> ResolveWhishlist(bool ignoreEnough = false, Item? item = null)
+        public static Dictionary<MongoID, WishlistData> ResolveWhishlist(bool ignoreEnough = false, Item? item = null, bool forTooltip = false)
         {
             if (Settings.RaidOnly!.Value && !RaidUtils.IsInRaid())
             {
@@ -44,7 +44,7 @@ namespace WishlistExtended.Features
             Dictionary<MongoID, WishlistData> wishlist = [];
 
             ResolveCrafts(wishlist);
-            ResolveHideout(wishlist, !ignoreEnough, excludeFir);
+            ResolveHideout(wishlist, !ignoreEnough, excludeFir, forTooltip && Settings.TooltipHideoutAlways!.Value);
             ResolveBarters(wishlist);
             ResolveQuests(wishlist, !ignoreEnough, excludeFir);
 
@@ -70,7 +70,8 @@ namespace WishlistExtended.Features
             }
         }
 
-        public static void ResolveHideout(Dictionary<MongoID, WishlistData> wishlist, bool hideEnough, bool excludeFir)
+        // everything: tooltip that lists every hideout requirement (FiR and non-FiR, any item copy), not only the wishlisted ones
+        public static void ResolveHideout(Dictionary<MongoID, WishlistData> wishlist, bool hideEnough, bool excludeFir, bool everything = false)
         {
             if (Settings.HideoutMode!.Value == Settings.EHideoutMode.Disabled)
             {
@@ -79,12 +80,15 @@ namespace WishlistExtended.Features
 
             foreach (var (itemId, hideout) in HideoutDataService.HideoutRequirements)
             {
+                bool firOnly = Settings.HideoutFirOnly!.Value && !everything;
+
                 if (hideEnough && Settings.RemoveIfEnough!.Value)
                 {
                     Models.ItemsCount inStash = StashService.GetItemCount(itemId);
                     Models.ItemsCount needed = HideoutDataService.TotalNeeded.TryGetValue(itemId, out var total) ? total : new();
 
-                    if (inStash.Total >= needed.Total && inStash.Fir >= needed.Fir)
+                    // FiR only: non-FiR requirements are not wishlisted, so only the FiR amount matters
+                    if (firOnly ? inStash.Fir >= needed.Fir : (inStash.Total >= needed.Total && inStash.Fir >= needed.Fir))
                     {
                         continue;
                     }
@@ -92,7 +96,12 @@ namespace WishlistExtended.Features
 
                 foreach (WishlistHideoutData item in hideout)
                 {
-                    if (excludeFir && item.Fir)
+                    if (!everything && excludeFir && item.Fir)
+                    {
+                        continue;
+                    }
+
+                    if (firOnly && !item.Fir)
                     {
                         continue;
                     }

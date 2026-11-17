@@ -9,5 +9,7 @@
   "wext_current_quests": "Active quests:",
   "wext_future_quests": "Future quests:",
 
+  "wext_fir": "FiR",
+  "wext_nonfir": "non-FiR",
   "wext_in_stash": "In hideout: {0} ({1} FiR)"
 }

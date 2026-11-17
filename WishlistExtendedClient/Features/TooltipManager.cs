@@ -30,7 +30,7 @@ namespace WishlistExtended.Features
 
         public static void OnItemShowTooltip(GridItemView gridItem)
         {
-            if (WishlistResolver.ResolveWhishlist(true, gridItem.Item).TryGetValue(gridItem.Item.TemplateId, out _wishlist))
+            if (WishlistResolver.ResolveWhishlist(true, gridItem.Item, true).TryGetValue(gridItem.Item.TemplateId, out _wishlist))
             {
                 _item = gridItem.Item;
             }
@@ -478,7 +478,8 @@ namespace WishlistExtended.Features
                 .Append(data.AreaType.LocalizeAreaName())
                 .Append(" lvl ")
                 .Append(data.Stage.ToString())
-                .AppendLine("</color>");
+                .Append("</color> ")
+                .AppendLine(data.Fir ? "<color=#f0f020>" + "wext_fir".Localized() + "</color>" : "<color=#a0a0a0>" + "wext_nonfir".Localized() + "</color>");
 
             count += data.Quantity;
         }

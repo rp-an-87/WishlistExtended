@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <!-- Fork: TarkovDir comes from the .csproj.user next to this file (not committed).
-       Deploys only the plugin DLL; .orig = first DLL ever replaced, .bak = previous deploy. -->
+       Deploys the plugin DLL + locales; .orig = first DLL ever replaced, .bak = previous deploy. -->
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(DeployToGame)' != 'false' And '$(TarkovDir)' != ''">
     <PropertyGroup><PluginDeployDir>$(TarkovDir)BepInEx\plugins\WishlistExtended\</PluginDeployDir></PropertyGroup>
     <ItemGroup><OutputDLL Include="$(TargetPath)" /></ItemGroup>
@@ -27,6 +27,8 @@
     <Move SourceFiles="$(PluginDeployDir)$(TargetFileName)" DestinationFiles="$(PluginDeployDir)$(TargetFileName).bak"
           Condition="Exists('$(PluginDeployDir)$(TargetFileName)')" />
     <Copy SourceFiles="@(OutputDLL)" DestinationFolder="$(PluginDeployDir)" />
+    <ItemGroup><LocaleFiles Include="$(ProjectDir)locales\*.json" /></ItemGroup>
+    <Copy SourceFiles="@(LocaleFiles)" DestinationFolder="$(PluginDeployDir)locales" />
   </Target>
 
   <ItemGroup>

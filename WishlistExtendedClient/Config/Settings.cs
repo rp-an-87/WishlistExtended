@@ -48,6 +48,7 @@ namespace WishlistExtended.Config
 
         public static ConfigEntry<ECraftMode>? CraftMode;
         public static ConfigEntry<EHideoutMode>? HideoutMode;
+        public static ConfigEntry<bool>? HideoutFirOnly;
         public static ConfigEntry<bool>? IncludeBarters;
         public static ConfigEntry<bool>? IncludeQuests;
         public static ConfigEntry<int>? HideoutPriority;
@@ -63,6 +64,7 @@ namespace WishlistExtended.Config
         public static ConfigEntry<bool>? RaidOnly;
 
         public static ConfigEntry<ETooltipMode>? TooltipMode;
+        public static ConfigEntry<bool>? TooltipHideoutAlways;
         public static ConfigEntry<int>? TooltipSize;
         public static ConfigEntry<KeyboardShortcut>? ShowAllTooltipBind;
         public static ConfigEntry<KeyboardShortcut>? CycleTooltipBind;
@@ -116,6 +118,16 @@ namespace WishlistExtended.Config
             );
 
             HideoutMode.SettingChanged += (_, _) => WishlistService.RebuildAll();
+
+            HideoutFirOnly = general.BindConfig(
+                "Wishlist only FiR hideout items",
+                false,
+                "Whether only hideout requirements that need found in raid items should be wishlisted. "
+                + "Useful when hideout mods (e.g. Hideout Backport) removed FiR from most requirements and you only care about the ones you have to find. "
+                + "Requirements that do not need FiR can still be listed in the tooltip, see 'Tooltip for non-wishlisted hideout items'"
+            );
+
+            HideoutFirOnly.SettingChanged += (_, _) => WishlistService.RebuildAll();
 
             IncludeBarters = general.BindConfig(
                 "Include barters",
@@ -217,6 +229,13 @@ namespace WishlistExtended.Config
                 "Hide - don't show anything, use 'Show all' bind to show\n" +
                 "Cycle - only one category, use 'Cycle tooltip' bind to change, use 'Show all' bind to show all\n" +
                 "HideFuture - hide future crafts/modules, use 'Show all' bind to show them"
+            );
+
+            TooltipHideoutAlways = tooltip.BindConfig(
+                "Tooltip for non-wishlisted hideout items",
+                false,
+                "Whether hideout upgrade requirements should be shown in the tooltip even if the item is not wishlisted "
+                + "(e.g. non-FiR requirements when 'Wishlist only FiR hideout items' is on). Every requirement is labeled FiR or non-FiR"
             );
 
             TooltipSize = tooltip.BindConfig(
