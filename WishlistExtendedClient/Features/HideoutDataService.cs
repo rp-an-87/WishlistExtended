@@ -69,8 +69,7 @@ namespace WishlistExtended.Features
                 return;
             }
 
-            var hideoutMode = Settings.HideoutMode!.Value;
-            bool hideFuture = hideoutMode != Settings.EHideoutMode.All;
+            // every stage is cached; the wishlist filters by its own mode, so other mods can read this whatever the wishlist settings are
             bool lockedAsFuture = Settings.ShowLockedAsFuture!.Value;
 
             foreach (AreaData area in hideoutAreas)
@@ -112,10 +111,6 @@ namespace WishlistExtended.Features
                             }
                         }
 
-                        if (isLocked && hideFuture)
-                        {
-                            break;
-                        }
                     }
 
                     foreach (Requirement req in stage.Requirements)
@@ -165,11 +160,6 @@ namespace WishlistExtended.Features
                             $"{itemReq.TemplateId} ({itemReq.IntCount}) -> {area.Template.Type} ({stage.Level}, FiR: {itemReq.IsSpawnedInSession}, Future: {!isCurrentStage}, Locked: {isLocked})");
                     }
 
-                    if (hideFuture)
-                    {
-                        Plugin.LogDebug($"\t\tNo future - break");
-                        break;
-                    }
                 }
             }
 

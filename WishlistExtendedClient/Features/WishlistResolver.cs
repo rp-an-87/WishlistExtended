@@ -1,6 +1,7 @@
 ﻿using EFT;
 using EFT.InventoryLogic;
 using System.Collections.Generic;
+using System.Linq;
 using WishlistExtended.Config;
 using WishlistExtended.Models;
 using ZGFueDkx.ZGCLib.helpers;
@@ -78,14 +79,17 @@ namespace WishlistExtended.Features
                 return;
             }
 
-            foreach (var (itemId, hideout) in HideoutDataService.HideoutRequirements)
+            bool onlyCurrent = Settings.HideoutMode!.Value == Settings.EHideoutMode.Current;
+
+            foreach (var (itemId, allStages) in HideoutDataService.HideoutRequirements)
             {
+                List<WishlistHideoutData> hideout = onlyCurrent ? [.. allStages.Where(h => !h.IsFuture)] : allStages;
                 bool firOnly = Settings.HideoutFirOnly!.Value && !everything;
 
                 if (hideEnough && Settings.RemoveIfEnough!.Value)
                 {
                     Models.ItemsCount inStash = StashService.GetItemCount(itemId);
-                    Models.ItemsCount needed = HideoutDataService.TotalNeeded.TryGetValue(itemId, out var total) ? total : new();
+                    Models.ItemsCount needed = new() { Total = hideout.Sum(h => h.Quantity), Fir = hideout.Where(h => h.Fir).Sum(h => h.Quantity) };
 
                     // FiR only: non-FiR requirements are not wishlisted, so only the FiR amount matters
                     if (firOnly ? inStash.Fir >= needed.Fir : (inStash.Total >= needed.Total && inStash.Fir >= needed.Fir))
