@@ -47,11 +47,48 @@ namespace WishlistExtended.Features
 
         public static void InvalidateCache() => _dirty = true;
 
+        // Quests not started yet come from the AllQuestsCheckmarks fork (it knows every quest, this mod only sees started ones)
+        private static void AddFutureQuests()
+        {
+            if (!Config.Settings.QuestsIncludeFuture!.Value ||
+                !CheckmarksBridge.TryGetFutureQuestNeeds(out string[] items, out string[] names, out int[] quantities, out bool[] firs))
+            {
+                return;
+            }
+
+            for (int i = 0; i < items.Length; i++)
+            {
+                MongoID itemId = new(items[i]);
+
+                if (!_cachedQuests.TryGetValue(itemId, out var questItems))
+                {
+                    questItems = [];
+                    _cachedQuests.Add(itemId, questItems);
+                }
+
+                if (!_totalNeeded.TryGetValue(itemId, out var totalCount))
+                {
+                    totalCount = new();
+                    _totalNeeded.Add(itemId, totalCount);
+                }
+
+                totalCount.Total += quantities[i];
+
+                if (firs[i])
+                {
+                    totalCount.Fir += quantities[i];
+                }
+
+                questItems.Add(new(names[i], default, quantities[i], firs[i], true));
+            }
+        }
+
         private static void BuildQuests()
         {
             _cachedQuests.Clear();
 
             Plugin.LogDebug("Building quests");
+            _totalNeeded.Clear();
 
             Profile profile = ClientAppUtils.GetClientApp().GetClientBackEndSession().Profile;
 
@@ -128,6 +165,8 @@ namespace WishlistExtended.Features
                     }
                 }
             }
+
+            AddFutureQuests();
 
             Plugin.LogSource?.LogInfo($"Loaded quests - {_cachedQuests.Count} unique items");
 

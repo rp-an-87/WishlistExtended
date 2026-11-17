@@ -12,8 +12,33 @@ namespace WishlistExtended.Features
     {
         private const string PluginGuid = "com.zgfuedkx.allquestscheckmarks";
 
+        private delegate bool FutureQuestsDelegate(out string[] itemId, out string[] questName, out int[] quantity, out bool[] fir);
+
         private static bool _resolved;
         private static Func<bool>? _showsHideout;
+        private static FutureQuestsDelegate? _futureQuests;
+
+        /// <summary>Remaining quest needs of quests not started yet, from the AllQuestsCheckmarks fork (parallel arrays).</summary>
+        public static bool TryGetFutureQuestNeeds(out string[] itemId, out string[] questName, out int[] quantity, out bool[] fir)
+        {
+            itemId = [];
+            questName = [];
+            quantity = [];
+            fir = [];
+
+            Resolve();
+
+            try
+            {
+                return _futureQuests is not null && _futureQuests(out itemId, out questName, out quantity, out fir);
+            }
+            catch (Exception e)
+            {
+                Plugin.LogSource?.LogError($"AllQuestsCheckmarks future quests lookup failed: {e}");
+                _futureQuests = null;
+                return false;
+            }
+        }
 
         public static bool CoversHideoutAndQuests
         {
@@ -59,6 +84,12 @@ namespace WishlistExtended.Features
             if (method is not null)
             {
                 _showsHideout = (Func<bool>)Delegate.CreateDelegate(typeof(Func<bool>), method);
+            }
+
+            MethodInfo? future = api?.GetMethod("TryGetFutureQuestNeeds", BindingFlags.Public | BindingFlags.Static);
+            if (future is not null)
+            {
+                _futureQuests = (FutureQuestsDelegate)Delegate.CreateDelegate(typeof(FutureQuestsDelegate), future);
             }
         }
     }

@@ -46,7 +46,7 @@ namespace WishlistExtended.Features
             ResolveCrafts(wishlist);
             ResolveHideout(wishlist, !ignoreEnough, excludeFir, forTooltip && Settings.TooltipHideoutAlways!.Value);
             ResolveBarters(wishlist);
-            ResolveQuests(wishlist, !ignoreEnough, excludeFir);
+            ResolveQuests(wishlist, !ignoreEnough, excludeFir, forTooltip && Settings.TooltipHideoutAlways!.Value);
 
             return wishlist;
         }
@@ -136,7 +136,7 @@ namespace WishlistExtended.Features
             }
         }
 
-        public static void ResolveQuests(Dictionary<MongoID, WishlistData> wishlist, bool hideEnough, bool excludeFir)
+        public static void ResolveQuests(Dictionary<MongoID, WishlistData> wishlist, bool hideEnough, bool excludeFir, bool everything = false)
         {
             if (!Settings.IncludeQuests!.Value)
             {
@@ -145,12 +145,14 @@ namespace WishlistExtended.Features
 
             foreach (var (itemId, quests) in QuestDataService.Quests)
             {
+                bool firOnly = Settings.QuestsFirOnly!.Value && !everything;
+
                 if (hideEnough && Settings.RemoveIfEnough!.Value)
                 {
                     Models.ItemsCount inStash = StashService.GetItemCount(itemId);
                     Models.ItemsCount needed = QuestDataService.TotalNeeded.TryGetValue(itemId, out var total) ? total : new();
 
-                    if (inStash.Total >= needed.Total && inStash.Fir >= needed.Fir)
+                    if (firOnly ? inStash.Fir >= needed.Fir : (inStash.Total >= needed.Total && inStash.Fir >= needed.Fir))
                     {
                         continue;
                     }
@@ -158,7 +160,12 @@ namespace WishlistExtended.Features
 
                 foreach (WishlistQuestData item in quests)
                 {
-                    if (excludeFir && item.Fir)
+                    if (!everything && excludeFir && item.Fir)
+                    {
+                        continue;
+                    }
+
+                    if (firOnly && !item.Fir)
                     {
                         continue;
                     }

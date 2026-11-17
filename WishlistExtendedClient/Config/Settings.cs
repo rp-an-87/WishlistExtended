@@ -51,6 +51,8 @@ namespace WishlistExtended.Config
         public static ConfigEntry<bool>? HideoutFirOnly;
         public static ConfigEntry<bool>? IncludeBarters;
         public static ConfigEntry<bool>? IncludeQuests;
+        public static ConfigEntry<bool>? QuestsFirOnly;
+        public static ConfigEntry<bool>? QuestsIncludeFuture;
         public static ConfigEntry<int>? HideoutPriority;
         public static ConfigEntry<int>? CraftsPriority;
         public static ConfigEntry<int>? BartersPriority;
@@ -65,6 +67,7 @@ namespace WishlistExtended.Config
 
         public static ConfigEntry<ETooltipMode>? TooltipMode;
         public static ConfigEntry<bool>? TooltipHideoutAlways;
+        public static ConfigEntry<bool>? TooltipFirLabels;
         public static ConfigEntry<bool>? DeferToCheckmarks;
         public static ConfigEntry<int>? TooltipSize;
         public static ConfigEntry<KeyboardShortcut>? ShowAllTooltipBind;
@@ -145,6 +148,23 @@ namespace WishlistExtended.Config
             );
 
             IncludeQuests.SettingChanged += (_, _) => WishlistService.RebuildAll();
+
+            QuestsFirOnly = general.BindConfig(
+                "Wishlist only FiR quest items",
+                true,
+                "Whether only quest hand-ins that need found in raid items should be wishlisted"
+            );
+
+            QuestsFirOnly.SettingChanged += (_, _) => WishlistService.RebuildAll();
+
+            QuestsIncludeFuture = general.BindConfig(
+                "Include future quests (needs AllQuestsCheckmarks fork)",
+                true,
+                "Whether items needed for quests you have not started yet should be wishlisted too. "
+                + "Uses the quest data and settings of the AllQuestsCheckmarks fork; has no effect without it"
+            );
+
+            QuestsIncludeFuture.SettingChanged += (_, _) => WishlistService.RebuildAll();
 
             CraftsPriority = general.BindConfig(
                 "Crafts priority",
@@ -237,6 +257,12 @@ namespace WishlistExtended.Config
                 true,
                 "Whether hideout upgrade requirements should be shown in the tooltip even if the item is not wishlisted "
                 + "(e.g. non-FiR requirements when 'Wishlist only FiR hideout items' is on). Every requirement is labeled FiR or non-FiR"
+            );
+
+            TooltipFirLabels = tooltip.BindConfig(
+                "Label hideout requirements as FiR / non-FiR",
+                true,
+                "Whether every hideout line in the tooltip should say if the requirement needs a found in raid item"
             );
 
             DeferToCheckmarks = tooltip.BindConfig(

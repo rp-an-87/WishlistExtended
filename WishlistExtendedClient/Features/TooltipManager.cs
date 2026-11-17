@@ -433,13 +433,25 @@ namespace WishlistExtended.Features
             }
 
             StringBuilder currentQuests = new();
+            StringBuilder futureQuests = new();
 
             string currentColor = Settings.CurrentQuetsColor!.GetHexColor();
 
             int currentCount = 0;
+            int futureCount = 0;
 
             foreach (var quest in _wishlist!.Quests)
             {
+                if (quest.IsFuture)
+                {
+                    if (includeFuture)
+                    {
+                        AppendQuest(futureQuests, quest, currentColor, ref futureCount);
+                    }
+
+                    continue;
+                }
+
                 AppendQuest(
                     currentQuests,
                     quest,
@@ -455,6 +467,15 @@ namespace WishlistExtended.Features
                     .Append(currentCount)
                     .AppendLine(")")
                     .Append(currentQuests);
+            }
+
+            if (futureQuests.Length > 0)
+            {
+                sb.Append("wext_future_quests".Localized())
+                    .Append(" (")
+                    .Append(futureCount)
+                    .AppendLine(")")
+                    .Append(futureQuests);
             }
         }
 
@@ -485,8 +506,14 @@ namespace WishlistExtended.Features
                 .Append(data.AreaType.LocalizeAreaName())
                 .Append(" lvl ")
                 .Append(data.Stage.ToString())
-                .Append("</color> ")
-                .AppendLine(data.Fir ? "<color=#f0f020>" + "wext_fir".Localized() + "</color>" : "<color=#a0a0a0>" + "wext_nonfir".Localized() + "</color>");
+                .Append("</color>");
+
+            if (Settings.TooltipFirLabels!.Value)
+            {
+                sb.Append(' ').Append(data.Fir ? "<color=#f0f020>" + "wext_fir".Localized() + "</color>" : "<color=#a0a0a0>" + "wext_nonfir".Localized() + "</color>");
+            }
+
+            sb.AppendLine();
 
             count += data.Quantity;
         }
@@ -516,11 +543,18 @@ namespace WishlistExtended.Features
                 .Append(color)
                 .Append('>')
                 .Append(data.QuestName.Localized())
-                .Append("</color> @ <color=")
-                .Append(color)
-                .Append('>')
-                .Append($"{data.TraderId} Nickname".Localized())
-                .AppendLine("</color>");
+                .Append("</color>");
+
+            if (!data.IsFuture)
+            {
+                sb.Append(" @ <color=")
+                    .Append(color)
+                    .Append('>')
+                    .Append($"{data.TraderId} Nickname".Localized())
+                    .Append("</color>");
+            }
+
+            sb.AppendLine();
 
             count += data.Quantity;
         }
