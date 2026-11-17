@@ -13,3 +13,4 @@ SkillDistribution-Server/package-lock.json
 **/obj/
 
 TODO.md
+*.csproj.user
