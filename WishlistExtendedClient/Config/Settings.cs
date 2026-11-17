@@ -168,9 +168,9 @@ namespace WishlistExtended.Config
             QuestsIncludeFuture.SettingChanged += (_, _) => WishlistService.RebuildAll();
 
             BothAsOther = general.BindConfig(
-                "Items for both hideout and quests go to 'Other'",
+                "Hideout and quest items go to the Other group",
                 true,
-                "Whether an item needed for both a hideout upgrade and a quest should be listed in the 'Other' wishlist group "
+                "Whether an item needed for both a hideout upgrade and a quest should be listed in the Other wishlist group "
                 + "instead of the group chosen by the priorities below"
             );
 
