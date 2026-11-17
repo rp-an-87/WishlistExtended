@@ -65,6 +65,7 @@ namespace WishlistExtended.Config
 
         public static ConfigEntry<ETooltipMode>? TooltipMode;
         public static ConfigEntry<bool>? TooltipHideoutAlways;
+        public static ConfigEntry<bool>? DeferToCheckmarks;
         public static ConfigEntry<int>? TooltipSize;
         public static ConfigEntry<KeyboardShortcut>? ShowAllTooltipBind;
         public static ConfigEntry<KeyboardShortcut>? CycleTooltipBind;
@@ -121,7 +122,7 @@ namespace WishlistExtended.Config
 
             HideoutFirOnly = general.BindConfig(
                 "Wishlist only FiR hideout items",
-                false,
+                true,
                 "Whether only hideout requirements that need found in raid items should be wishlisted. "
                 + "Useful when hideout mods (e.g. Hideout Backport) removed FiR from most requirements and you only care about the ones you have to find. "
                 + "Requirements that do not need FiR can still be listed in the tooltip, see 'Tooltip for non-wishlisted hideout items'"
@@ -233,9 +234,16 @@ namespace WishlistExtended.Config
 
             TooltipHideoutAlways = tooltip.BindConfig(
                 "Tooltip for non-wishlisted hideout items",
-                false,
+                true,
                 "Whether hideout upgrade requirements should be shown in the tooltip even if the item is not wishlisted "
                 + "(e.g. non-FiR requirements when 'Wishlist only FiR hideout items' is on). Every requirement is labeled FiR or non-FiR"
+            );
+
+            DeferToCheckmarks = tooltip.BindConfig(
+                "Leave hideout and quests to AllQuestsCheckmarks fork",
+                true,
+                "Whether the hideout and quest lines should be left out of this tooltip when the AllQuestsCheckmarks fork shows them "
+                + "(it lists them together with combined totals). Crafts and barters stay here"
             );
 
             TooltipSize = tooltip.BindConfig(

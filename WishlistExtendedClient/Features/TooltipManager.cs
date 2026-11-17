@@ -229,7 +229,9 @@ namespace WishlistExtended.Features
                 steps.Add(0);
             }
 
-            if (Settings.HideoutMode!.Value != Settings.EHideoutMode.Disabled)
+            bool covered = CheckmarksBridge.CoversHideoutAndQuests;
+
+            if (Settings.HideoutMode!.Value != Settings.EHideoutMode.Disabled && !covered)
             {
                 steps.Add(1);
             }
@@ -239,9 +241,14 @@ namespace WishlistExtended.Features
                 steps.Add(2);
             }
 
-            if (Settings.IncludeQuests!.Value)
+            if (Settings.IncludeQuests!.Value && !covered)
             {
                 steps.Add(3);
+            }
+
+            if (steps.Count == 0)
+            {
+                return null;
             }
 
             switch (steps[_tooltipCycle % steps.Count])
@@ -332,7 +339,7 @@ namespace WishlistExtended.Features
 
         private static void AppendHideout(StringBuilder sb, bool includeFuture)
         {
-            if (!_wishlist!.HasHideout)
+            if (!_wishlist!.HasHideout || CheckmarksBridge.CoversHideoutAndQuests)
             {
                 return;
             }
@@ -420,7 +427,7 @@ namespace WishlistExtended.Features
 
         private static void AppendQuests(StringBuilder sb, bool includeFuture)
         {
-            if (!_wishlist!.HasQuests)
+            if (!_wishlist!.HasQuests || CheckmarksBridge.CoversHideoutAndQuests)
             {
                 return;
             }
