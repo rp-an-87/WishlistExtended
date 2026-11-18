@@ -48,3 +48,5 @@ Upstream files we edited:
 The wishlist itself is no longer needed for the overlays (they are drawn by the checkmarks fork). This fork is still needed for the hideout data (API), and for the in-game wishlist and flea wishlist tab if used.
 
 Config migration: when a fork key is renamed or moved, edit the owner's `BepInEx\config\com.zgfuedkx.wishlistextended.cfg` with a backup first.
+
+Full settings cross reference of both forks: `dev-own\docs\checkmarks-settings-reference.md` (workspace, not in this repo). Fork settings start their F12 description with `[Fork]`.
