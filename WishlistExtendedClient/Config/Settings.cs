@@ -5,7 +5,7 @@ using ZGFueDkx.ZGCLib.Config;
 
 namespace WishlistExtended.Config
 {
-    internal static class Settings
+    internal static partial class Settings
     {
         public enum ECraftMode
         {
@@ -48,12 +48,8 @@ namespace WishlistExtended.Config
 
         public static ConfigEntry<ECraftMode>? CraftMode;
         public static ConfigEntry<EHideoutMode>? HideoutMode;
-        public static ConfigEntry<bool>? HideoutFirOnly;
         public static ConfigEntry<bool>? IncludeBarters;
         public static ConfigEntry<bool>? IncludeQuests;
-        public static ConfigEntry<bool>? QuestsFirOnly;
-        public static ConfigEntry<bool>? QuestsIncludeFuture;
-        public static ConfigEntry<bool>? BothAsOther;
         public static ConfigEntry<int>? HideoutPriority;
         public static ConfigEntry<int>? CraftsPriority;
         public static ConfigEntry<int>? BartersPriority;
@@ -67,9 +63,6 @@ namespace WishlistExtended.Config
         public static ConfigEntry<bool>? RaidOnly;
 
         public static ConfigEntry<ETooltipMode>? TooltipMode;
-        public static ConfigEntry<bool>? TooltipHideoutAlways;
-        public static ConfigEntry<bool>? TooltipFirLabels;
-        public static ConfigEntry<bool>? DeferToCheckmarks;
         public static ConfigEntry<int>? TooltipSize;
         public static ConfigEntry<KeyboardShortcut>? ShowAllTooltipBind;
         public static ConfigEntry<KeyboardShortcut>? CycleTooltipBind;
@@ -124,16 +117,6 @@ namespace WishlistExtended.Config
 
             HideoutMode.SettingChanged += (_, _) => WishlistService.RebuildAll();
 
-            HideoutFirOnly = general.BindConfig(
-                "Wishlist only FiR hideout items",
-                true,
-                "Whether only hideout requirements that need found in raid items should be wishlisted. "
-                + "Useful when hideout mods (e.g. Hideout Backport) removed FiR from most requirements and you only care about the ones you have to find. "
-                + "Requirements that do not need FiR can still be listed in the tooltip, see 'Tooltip for non-wishlisted hideout items'"
-            );
-
-            HideoutFirOnly.SettingChanged += (_, _) => WishlistService.RebuildAll();
-
             IncludeBarters = general.BindConfig(
                 "Include barters",
                 true,
@@ -149,30 +132,6 @@ namespace WishlistExtended.Config
             );
 
             IncludeQuests.SettingChanged += (_, _) => WishlistService.RebuildAll();
-
-            QuestsFirOnly = general.BindConfig(
-                "Wishlist only FiR quest items",
-                true,
-                "Whether only quest hand-ins that need found in raid items should be wishlisted"
-            );
-
-            QuestsFirOnly.SettingChanged += (_, _) => WishlistService.RebuildAll();
-
-            QuestsIncludeFuture = general.BindConfig(
-                "Include future quests (needs AllQuestsCheckmarks fork)",
-                true,
-                "Whether items needed for quests you have not started yet should be wishlisted too. "
-                + "Uses the quest data and settings of the AllQuestsCheckmarks fork; has no effect without it"
-            );
-
-            QuestsIncludeFuture.SettingChanged += (_, _) => WishlistService.RebuildAll();
-
-            BothAsOther = general.BindConfig(
-                "Hideout and quest items go to the Other group",
-                true,
-                "Whether an item needed for both a hideout upgrade and a quest should be listed in the Other wishlist group "
-                + "instead of the group chosen by the priorities below"
-            );
 
             CraftsPriority = general.BindConfig(
                 "Crafts priority",
@@ -258,26 +217,6 @@ namespace WishlistExtended.Config
                 "Hide - don't show anything, use 'Show all' bind to show\n" +
                 "Cycle - only one category, use 'Cycle tooltip' bind to change, use 'Show all' bind to show all\n" +
                 "HideFuture - hide future crafts/modules, use 'Show all' bind to show them"
-            );
-
-            TooltipHideoutAlways = tooltip.BindConfig(
-                "Tooltip for non-wishlisted hideout items",
-                true,
-                "Whether hideout upgrade requirements should be shown in the tooltip even if the item is not wishlisted "
-                + "(e.g. non-FiR requirements when 'Wishlist only FiR hideout items' is on). Every requirement is labeled FiR or non-FiR"
-            );
-
-            TooltipFirLabels = tooltip.BindConfig(
-                "Label hideout requirements as FiR / non-FiR",
-                true,
-                "Whether every hideout line in the tooltip should say if the requirement needs a found in raid item"
-            );
-
-            DeferToCheckmarks = tooltip.BindConfig(
-                "Leave hideout and quests to AllQuestsCheckmarks fork",
-                true,
-                "Whether the hideout and quest lines should be left out of this tooltip when the AllQuestsCheckmarks fork shows them "
-                + "(it lists them together with combined totals). Crafts and barters stay here"
             );
 
             TooltipSize = tooltip.BindConfig(
@@ -392,6 +331,8 @@ namespace WishlistExtended.Config
                 BarterDataService.LoadBarters();
                 WishlistService.RebuildAll();
             });
+
+            InitFork(config);
 
             Plugin.LogSource?.LogInfo("Settings loaded");
         }
