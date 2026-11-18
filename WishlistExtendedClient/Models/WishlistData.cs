@@ -31,13 +31,16 @@ namespace WishlistExtended.Models
         public bool IsFavorite { get; set; } = isFavorite;
     }
 
-    internal class WishlistHideoutData(EAreaType areaType, int stage, int quantity, bool fir, bool isFuture)
+    internal class WishlistHideoutData(EAreaType areaType, int stage, int quantity, bool fir, bool isFuture, bool wishlistable = true)
     {
         public EAreaType AreaType { get; set; } = areaType;
         public int Stage { get; set; } = stage;
         public int Quantity { get; set; } = quantity;
         public bool Fir { get; set; } = fir;
         public bool IsFuture { get; set; } = isFuture;
+
+        // whether the game accepts the item in a wishlist; the data keeps every requirement (other mods read it), the wishlist only takes these
+        public bool Wishlistable { get; set; } = wishlistable;
     }
 
     internal class WishlistBarterData(MongoID resultId, MongoID traderId, int quantity, int loyaltyLevel)

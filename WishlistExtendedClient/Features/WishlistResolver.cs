@@ -83,7 +83,7 @@ namespace WishlistExtended.Features
 
             foreach (var (itemId, allStages) in HideoutDataService.HideoutRequirements)
             {
-                List<WishlistHideoutData> hideout = onlyCurrent ? [.. allStages.Where(h => !h.IsFuture)] : allStages;
+                List<WishlistHideoutData> hideout = [.. allStages.Where(h => h.Wishlistable && (!onlyCurrent || !h.IsFuture))];
                 bool firOnly = Settings.HideoutFirOnly!.Value && !everything;
 
                 if (hideEnough && Settings.RemoveIfEnough!.Value)

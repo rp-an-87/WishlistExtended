@@ -123,12 +123,6 @@ namespace WishlistExtended.Features
                             continue;
                         }
 
-                        if (!WishlistManager.IsAvailableForWishlist(itemReq.Item))
-                        {
-                            Plugin.LogDebug($"\t\t\tItem {itemReq.TemplateId} is not suitable for wishlist");
-                            continue;
-                        }
-
                         if (!_cachedRequirements.TryGetValue(itemReq.TemplateId, out var itemUpgrades))
                         {
                             itemUpgrades = [];
@@ -153,7 +147,8 @@ namespace WishlistExtended.Features
                             stage.Level,
                             itemReq.IntCount,
                             itemReq.IsSpawnedInSession,
-                            isLocked || !isCurrentStage
+                            isLocked || !isCurrentStage,
+                            WishlistManager.IsAvailableForWishlist(itemReq.Item)
                         ));
 
                         Plugin.LogDebug($"\t\t\tRequirement added: " +
