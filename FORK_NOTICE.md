@@ -24,3 +24,5 @@ Settings: upstream's sections are unchanged; ours are "5. Hideout and quests" an
 Build changes: csproj uses `TarkovDir` (from an uncommitted `.csproj.user`) instead of assuming the repo sits in the game folder; deploys the DLL and the locales, keeping `.orig`/`.bak`.
 
 See `MERGING.md` for the step by step update from upstream, the conflict table and the settings ownership.
+
+**Archived 2026-11-18.** Superseded for hideout and quest needs by the AllQuestsCheckmarks fork (https://github.com/rp-an-87/AllQuestsCheckmarks), which reads the hideout itself. This repo is kept read-only for reference; upstream is https://github.com/danx91/WishlistExtended.
