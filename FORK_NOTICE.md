@@ -22,3 +22,5 @@ New files: `WishlistExtendedApi`, `CheckmarksBridge`, `SettingsFork`. Upstream f
 Settings: upstream's sections are unchanged; ours are "5. Hideout and quests" and "6. Tooltip additions".
 
 Build changes: csproj uses `TarkovDir` (from an uncommitted `.csproj.user`) instead of assuming the repo sits in the game folder; deploys the DLL and the locales, keeping `.orig`/`.bak`.
+
+See `MERGING.md` for the step by step update from upstream, the conflict table and the settings ownership.
